@@ -7,16 +7,16 @@
     "ModDescription": "Travel options allowing time accelerated travel as well as standard fast travel",
     "GUID": "93f3ad1c-83cc-40ac-b762-96d2f47f2e05",
     "Files": [
-        "Assets/Game/Mods/TravelOptions/modsettings.json",
-        "Assets/Game/Mods/TravelOptions/Scripts/TravelOptionsPopUp.cs",
-        "Assets/Game/Mods/TravelOptions/Scripts/PlayerAutoPilot.cs",
-        "Assets/Game/Mods/TravelOptions/Scripts/TravelOptionsMod.cs",
-        "Assets/Game/Mods/TravelOptions/Scripts/TravelControlUI.cs",
-        "Assets/Game/Mods/TravelOptions/Scripts/TravelOptionsMapWindow.cs",
-        "Assets/Game/Mods/TravelOptions/Textures/TOcontrolUI.png",
-        "Assets/Game/Mods/TravelOptions/Textures/TOportsOff.png",
-        "Assets/Game/Mods/TravelOptions/Textures/TOportsOn.png",
-        "Assets/Game/Mods/TravelOptions/modpresets.json",
-        "Assets/Game/Mods/TravelOptions/TravelOptions.dfmod.json"
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/modsettings.json",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/Scripts/TravelOptionsPopUp.cs",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/Scripts/PlayerAutoPilot.cs",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/Scripts/TravelOptionsMod.cs",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/Scripts/TravelControlUI.cs",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/Scripts/TravelOptionsMapWindow.cs",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/Textures/TOcontrolUI.png",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/Textures/TOportsOff.png",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/Textures/TOportsOn.png",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/modpresets.json",
+        "Assets/Game/Mods/dfunity-mods/TravelOptions/TravelOptions.dfmod.json"
     ]
 }
