@@ -111,8 +111,9 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Sample angle of terrain
-                Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit1);
-                Physics.Raycast(transform.position + transform.forward, Vector3.down, out RaycastHit hit2);
+                RaycastHit hit1, hit2;
+                Physics.Raycast(transform.position, Vector3.down, out  hit1);
+                Physics.Raycast(transform.position + transform.forward, Vector3.down, out  hit2);
                 float heightDiff = hit1.point.y - hit2.point.y;
                 float angle = Mathf.Atan2(heightDiff, 1) * 100;
                 terrainAngles[sampleIdx++] = angle;
