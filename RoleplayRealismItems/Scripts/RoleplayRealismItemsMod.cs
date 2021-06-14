@@ -75,7 +75,6 @@ namespace RoleplayRealism
                 foreach (int mobDataId in MobLootKeys.Keys)
                 {
                     // Log a message indicating the enemy mob being updated and update the loot key.
-                    //Debug.LogFormat("Updating enemy loot key for {0} to {1}.", EnemyBasics.Enemies[mobDataId].Name, MobLootKeys[mobDataId]);
                     Debug.LogFormat("Updating enemy loot key for {0} to {1}.", TextManager.Instance.GetLocalizedEnemyName(mobDataId), MobLootKeys[mobDataId]);
                     EnemyBasics.Enemies[mobDataId].LootTableKey = (string) MobLootKeys[mobDataId];
                 }
@@ -91,7 +90,9 @@ namespace RoleplayRealism
 
             if (conditionBasedPrices)
             {
-                FormulaHelper.RegisterOverride(mod, "ModifyFoundLootItems", (Func<DaggerfallUnityItem[], int>)RandomConditionFoundLootItems);
+                EnemyEntity.OnLootSpawned += RandomConditionEnemyItems;     // Enemy random loot (not allocated equipment)
+                LootTables.OnLootSpawned += RandomConditionLootItems;       // Container random loot
+
                 FormulaHelper.RegisterOverride(mod, "CalculateCost", (Func<int, int, int, int>)CalculateConditionCost);
                 FormulaHelper.RegisterOverride(mod, "CalculateItemRepairCost", (Func<int, int, int, int, IGuild, int>)CalculateItemRepairCost);
             }
@@ -169,21 +170,29 @@ namespace RoleplayRealism
             return true;
         }
 
-        public static int RandomConditionFoundLootItems(DaggerfallUnityItem[] lootItems)
+        private static void RandomConditionEnemyItems(object sender, EnemyLootSpawnedEventArgs lootArgs)
         {
-            int changes = 0;
-            for (int i = 0; i < lootItems.Length; i++)
+            RandomConditionFoundLootItems(lootArgs.Items);
+        }
+
+        private static void RandomConditionLootItems(object sender, TabledLootSpawnedEventArgs lootArgs)
+        {
+            RandomConditionFoundLootItems(lootArgs.Items);
+        }
+
+        private static void RandomConditionFoundLootItems(ItemCollection lootItems)
+        {
+            for (int i = 0; i < lootItems.Count; i++)
             {
-                DaggerfallUnityItem item = lootItems[i];
+                DaggerfallUnityItem item = lootItems.GetItem(i);
+
                 if ((item.ItemGroup == ItemGroups.Armor || item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Books) && !item.IsArtifact)
                 {
                     // Apply a random condition between 20% and 70%.
                     float conditionMod = UnityEngine.Random.Range(0.2f, 0.75f);
                     item.currentCondition = (int)(item.maxCondition * conditionMod);
-                    changes++;
                 }
             }
-            return changes;
         }
 
         public static int CalculateConditionCost(int baseValue, int shopQuality, int conditionPercentage = -1)

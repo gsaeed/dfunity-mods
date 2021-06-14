@@ -44,9 +44,11 @@ namespace RoleplayRealism
             "Captain_Ulthega,       0, -1, 1021",
             "Orthus_Dharjen,        0, -1, 1022"
         };
+        static readonly int[] loanVals = { 2000, 4000, 6000, 8000, 10000, 20000, 30000, 40000, 50000 };
 
 
         static Mod mod;
+        static int loanMaxPerLevel;
 
         [Invoke(StateManager.StateTypes.Start, 0)]
         public static void Init(InitParams initParams)
@@ -61,7 +63,6 @@ namespace RoleplayRealism
             ModSettings settings = mod.GetSettings();
             bool bedSleeping = settings.GetBool("Modules", "bedSleeping");
             bool archery = settings.GetBool("Modules", "advancedArchery");
-            bool riding = settings.GetBool("Modules", "enhancedRiding");
             bool encumbrance = settings.GetBool("Modules", "encumbranceEffects");
             bool bandaging = settings.GetBool("Modules", "bandaging");
             bool shipPorts = settings.GetBool("Modules", "shipPorts");
@@ -76,13 +77,19 @@ namespace RoleplayRealism
             bool classicStrDmgBonus = settings.GetBool("Modules", "classicStrengthDamageBonus");
             bool variantNpcs = settings.GetBool("Modules", "variantNpcs");
 
-            InitMod(bedSleeping, archery, riding, encumbrance, bandaging, shipPorts, expulsion, climbing, weaponSpeed, weaponMaterials, equipDamage, enemyAppearance, purifyPot, autoExtinguishLight, classicStrDmgBonus, variantNpcs);
+            bool riding = settings.GetBool("EnhancedRiding", "enhancedRiding");
+            bool training = settings.GetBool("RefinedTraining", "refinedTraining");
+
+            loanMaxPerLevel = loanVals[settings.GetInt("Modules", "loanAmountPerLevel")];
+            FormulaHelper.RegisterOverride(mod, "CalculateMaxBankLoan", (Func<int>)CalculateMaxBankLoan);
+
+            InitMod(bedSleeping, archery, riding, encumbrance, bandaging, shipPorts, expulsion, climbing, weaponSpeed, weaponMaterials, equipDamage, enemyAppearance, purifyPot, autoExtinguishLight, classicStrDmgBonus, variantNpcs, training);
 
             mod.IsReady = true;
         }
 
         public static void InitMod(bool bedSleeping, bool archery, bool riding, bool encumbrance, bool bandaging, bool shipPorts, bool expulsion, bool climbing, bool weaponSpeed, bool weaponMaterials, bool equipDamage, bool enemyAppearance,
-            bool purifyPot, bool autoExtinguishLight, bool classicStrDmgBonus, bool variantNpcs)
+            bool purifyPot, bool autoExtinguishLight, bool classicStrDmgBonus, bool variantNpcs, bool training)
         {
             Debug.Log("Begin mod init: RoleplayRealism");
 
@@ -170,7 +177,7 @@ namespace RoleplayRealism
 
             if (purifyPot)
             {
-                GameManager.Instance.EntityEffectBroker.RegisterEffectTemplate(new CureDiseaseRR(), true);
+                GameManager.Instance.EntityEffectBroker.RegisterEffectTemplate(new CureDiseasePotionRR(), true);
             }
 
             if (autoExtinguishLight)
@@ -186,6 +193,11 @@ namespace RoleplayRealism
             if (variantNpcs)
             {
                 PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior_VariantNPCsprites;
+            }
+
+            if (training)
+            {
+                UIWindowFactory.RegisterCustomUIWindow(UIWindowType.GuildServiceTraining, typeof(GuildServiceTrainingRR));
             }
 
             // Initialise the FG master quest.
@@ -227,6 +239,11 @@ namespace RoleplayRealism
                     return 131598;
             }
             return 0;
+        }
+
+        public static int CalculateMaxBankLoan()
+        {
+            return GameManager.Instance.PlayerEntity.Level * loanMaxPerLevel;
         }
 
         public static int DamageModifier_classicDisplay(int strength)
@@ -464,15 +481,15 @@ namespace RoleplayRealism
                 !GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease &&
                 !DaggerfallUI.Instance.FadeBehaviour.FadeInProgress)
             {
-                float encPc = playerEntity.CarriedWeight / playerEntity.MaxEncumbrance;
+                float encPc = Mathf.Min(playerEntity.CarriedWeight / playerEntity.MaxEncumbrance, 1.2f);
                 float encOver = Mathf.Max(encPc - 0.75f, 0f) * EncEffectScaleFactor;
                 if (encOver > 0)
                 {
-                    int speedEffect = Mathf.Min(playerEntity.Stats.PermanentSpeed - 2, (int)(playerEntity.Stats.PermanentSpeed * encOver));
+                    int speedEffect = Mathf.Min(playerEntity.Stats.LiveSpeed - 2, (int)(playerEntity.Stats.PermanentSpeed * encOver));
                     int fatigueEffect = Mathf.Min(playerEntity.CurrentFatigue - 100, (int)(encOver * 100));
 
 #if UNITY_EDITOR
-                    Debug.LogFormat("Encumbrance {0}, over {1} = effects: {2} speed, {3} fatigue", encPc, encOver, speedEffect, fatigueEffect);
+                    Debug.LogFormat("Encumbrance {0}, over {1} = effects: {2} speed, {3} fatigue  speed={4}", encPc, encOver, speedEffect, fatigueEffect, playerEntity.Stats.LiveSpeed);
 #endif
                     playerEntity.DecreaseFatigue(fatigueEffect, false);
 

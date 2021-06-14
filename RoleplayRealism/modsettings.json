@@ -22,13 +22,6 @@
                 },
                 {
                     "Value": true,
-                    "Name": "enhancedRiding",
-                    "Description": "Enhances horse riding, improving presentation and allowing galloping.",
-                    "$version": "v1",
-                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
-                },
-                {
-                    "Value": true,
                     "Name": "encumbranceEffects",
                     "Description": "Provides speed and fatigue penalties when carrying too much weight.",
                     "$version": "v1",
@@ -117,6 +110,24 @@
                     "Description": "Enable variant NPC sprites in shops & taverns",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Options": [
+                        "2000",
+                        "4000",
+                        "6000",
+                        "8000",
+                        "10000",
+                        "20000",
+                        "30000",
+                        "40000",
+                        "50000"
+                    ],
+                    "Value": 4,
+                    "Name": "loanAmountPerLevel",
+                    "Description": "Sets the maximum amount per level that can be borrowed from banks",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.MultipleChoiceKey"
                 }
             ],
             "$version": "v1"
@@ -126,6 +137,13 @@
             "Description": "Enhanced horse riding implementation settings.",
             "IsAdvanced": false,
             "Keys": [
+                {
+                    "Value": true,
+                    "Name": "enhancedRiding",
+                    "Description": "Enable enhanced horse riding module, improving presentation and allowing galloping.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
                 {
                     "Value": true,
                     "Name": "RealisticMovement",
@@ -148,6 +166,35 @@
                     "Description": "Scale factor to soften terrain gradient following. (0=none, 32=max soften)",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                }
+            ],
+            "$version": "v1"
+        },
+        {
+            "Name": "RefinedTraining",
+            "Description": "Refines guild training service so skill is selected first.",
+            "IsAdvanced": false,
+            "Keys": [
+                {
+                    "Value": true,
+                    "Name": "refinedTraining",
+                    "Description": "Enable refined skill training service.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Value": true,
+                    "Name": "variableTrainingPrice",
+                    "Description": "Makes price of training based on skill level as well as player level.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Value": false,
+                    "Name": "intensiveTraining",
+                    "Description": "Enables intensive training option for a session per day for five days, for extra cost.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 }
             ],
             "$version": "v1"

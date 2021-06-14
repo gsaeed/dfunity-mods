@@ -32,8 +32,10 @@ namespace BasicRoads
         public const string RoadDataFilename = "roadData.txt";
         public const string TrackDataFilename = "trackData.txt";
 
-        Color32 roadColor = new Color32(60, 60, 60, 255);
-        Color32 trackColor = new Color32(160, 118, 74, 255);
+        public const bool allowDeletions = true;    // Allows edits of zero to be loaded over existing data if true.
+
+        static Color32 roadColor = new Color32(60, 60, 60, 255);
+        static Color32 trackColor = new Color32(160, 118, 74, 255);
 
         const string roadsOffName = "roadsOff.png";
         const string roadsOnName = "roadsOn.png";
@@ -375,9 +377,9 @@ namespace BasicRoads
 
                     int pIdx = originX + x + ((originY + y) * MapsFile.MaxMapPixelX);
                     if (showPaths[BasicRoadsTexturing.tracks])
-                        DrawPath(offset5, width5, pathsData[BasicRoadsTexturing.tracks][pIdx], trackColor);
+                        DrawPath(offset5, width5, pathsData[BasicRoadsTexturing.tracks][pIdx], trackColor, ref locationDotsPixelBuffer);
                     if (showPaths[BasicRoadsTexturing.roads])
-                        DrawPath(offset5, width5, pathsData[BasicRoadsTexturing.roads][pIdx], roadColor);
+                        DrawPath(offset5, width5, pathsData[BasicRoadsTexturing.roads][pIdx], roadColor, ref locationDotsPixelBuffer);
                     //Debug.LogFormat("Found road at x:{0} y:{1}  index:{2}", originX + x, originY + y, rIdx);
                 }
             }
@@ -416,51 +418,51 @@ namespace BasicRoads
             return locationType == DFRegion.LocationTypes.TownCity || locationType == DFRegion.LocationTypes.TownHamlet;
         }
 
-        private void DrawPath(int offset, int width, byte pathDataPt, Color32 pathColor)
+        private static void DrawPath(int offset, int width, byte pathDataPt, Color32 pathColor, ref Color32[] pixelBuffer)
         {
             if (pathDataPt == 0)
                 return;
 
-            locationDotsPixelBuffer[offset + (width * 2) + 2] = pathColor;
+            pixelBuffer[offset + (width * 2) + 2] = pathColor;
             if ((pathDataPt & BasicRoadsTexturing.S) != 0)
             {
-                locationDotsPixelBuffer[offset + 2] = pathColor;
-                locationDotsPixelBuffer[offset + width + 2] = pathColor;
+                pixelBuffer[offset + 2] = pathColor;
+                pixelBuffer[offset + width + 2] = pathColor;
             }
             if ((pathDataPt & BasicRoadsTexturing.SE) != 0)
             {
-                locationDotsPixelBuffer[offset + 4] = pathColor;
-                locationDotsPixelBuffer[offset + width + 3] = pathColor;
+                pixelBuffer[offset + 4] = pathColor;
+                pixelBuffer[offset + width + 3] = pathColor;
             }
             if ((pathDataPt & BasicRoadsTexturing.E) != 0)
             {
-                locationDotsPixelBuffer[offset + (width * 2) + 3] = pathColor;
-                locationDotsPixelBuffer[offset + (width * 2) + 4] = pathColor;
+                pixelBuffer[offset + (width * 2) + 3] = pathColor;
+                pixelBuffer[offset + (width * 2) + 4] = pathColor;
             }
             if ((pathDataPt & BasicRoadsTexturing.NE) != 0)
             {
-                locationDotsPixelBuffer[offset + (width * 3) + 3] = pathColor;
-                locationDotsPixelBuffer[offset + (width * 4) + 4] = pathColor;
+                pixelBuffer[offset + (width * 3) + 3] = pathColor;
+                pixelBuffer[offset + (width * 4) + 4] = pathColor;
             }
             if ((pathDataPt & BasicRoadsTexturing.N) != 0)
             {
-                locationDotsPixelBuffer[offset + (width * 3) + 2] = pathColor;
-                locationDotsPixelBuffer[offset + (width * 4) + 2] = pathColor;
+                pixelBuffer[offset + (width * 3) + 2] = pathColor;
+                pixelBuffer[offset + (width * 4) + 2] = pathColor;
             }
             if ((pathDataPt & BasicRoadsTexturing.NW) != 0)
             {
-                locationDotsPixelBuffer[offset + (width * 3) + 1] = pathColor;
-                locationDotsPixelBuffer[offset + (width * 4)] = pathColor;
+                pixelBuffer[offset + (width * 3) + 1] = pathColor;
+                pixelBuffer[offset + (width * 4)] = pathColor;
             }
             if ((pathDataPt & BasicRoadsTexturing.W) != 0)
             {
-                locationDotsPixelBuffer[offset + (width * 2)] = pathColor;
-                locationDotsPixelBuffer[offset + (width * 2) + 1] = pathColor;
+                pixelBuffer[offset + (width * 2)] = pathColor;
+                pixelBuffer[offset + (width * 2) + 1] = pathColor;
             }
             if ((pathDataPt & BasicRoadsTexturing.SW) != 0)
             {
-                locationDotsPixelBuffer[offset] = pathColor;
-                locationDotsPixelBuffer[offset + width + 1] = pathColor;
+                pixelBuffer[offset] = pathColor;
+                pixelBuffer[offset + width + 1] = pathColor;
             }
         }
 
@@ -558,7 +560,7 @@ namespace BasicRoads
                             {
                                 int index = (l * MapsFile.MaxMapPixelX) + i;
                                 byte b = Convert.ToByte(line.Substring(i * 2, 2), 16);
-                                if (b != 0)
+                                if (allowDeletions || b != 0)
                                     pathsData[pathType][index] = b;
                             }
                         }
@@ -585,7 +587,7 @@ namespace BasicRoads
                 {
                     if (i != 0 && i % MapsFile.MaxMapPixelX == 0)
                         file.WriteLine();
-                    file.Write((existingData[i] == pathsData[pathType][i]) ? "00" : pathsData[pathType][i].ToString("x2"));
+                    file.Write((!allowDeletions && existingData[i] == pathsData[pathType][i]) ? "00" : pathsData[pathType][i].ToString("x2"));
                 }
             }
         }
@@ -602,6 +604,7 @@ namespace BasicRoads
                     ConsoleCommandsDatabase.RegisterCommand(PathEditorCmd.name, PathEditorCmd.description, PathEditorCmd.usage, PathEditorCmd.Execute);
                     ConsoleCommandsDatabase.RegisterCommand(ExportRoadDataCmd.name, ExportRoadDataCmd.description, ExportRoadDataCmd.usage, ExportRoadDataCmd.Execute);
                     ConsoleCommandsDatabase.RegisterCommand(ExportTrackDataCmd.name, ExportTrackDataCmd.description, ExportTrackDataCmd.usage, ExportTrackDataCmd.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(ExportPathsPngCmd.name, ExportPathsPngCmd.description, ExportPathsPngCmd.usage, ExportPathsPngCmd.Execute);
                 }
                 catch (Exception ex)
                 {
@@ -665,6 +668,39 @@ namespace BasicRoads
                     return "Exported edited dirt track path data to: " + Path.Combine(WorldDataReplacement.WorldDataPath, BasicRoadsTexturing.TrackDataFilename);
                 }
             }
+
+            private static class ExportPathsPngCmd
+            {
+                public static readonly string name = "ExportPathsPng";
+                public static readonly string description = "Exports path data to PNG file";
+                public static readonly string usage = "exportpathspng";
+
+                public static string Execute(params string[] args)
+                {
+                    int scale = 5;
+                    int width5 = MapsFile.MaxMapPixelX * scale;
+                    Color32[] pixelBuffer = new Color32[MapsFile.MaxMapPixelX * scale * MapsFile.MaxMapPixelY * scale];
+                    for (int y = 0; y < MapsFile.MaxMapPixelY; y++)
+                    {
+                        for (int x = 0; x < MapsFile.MaxMapPixelX; x++)
+                        {
+                            int offset = (x * scale) + ((MapsFile.MaxMapPixelY - y - 1) * scale * width5);
+                            int pIdx = x + (y * MapsFile.MaxMapPixelX);
+                            DrawPath(offset, width5, pathsData[BasicRoadsTexturing.tracks][pIdx], trackColor, ref pixelBuffer);
+                            DrawPath(offset, width5, pathsData[BasicRoadsTexturing.roads][pIdx], roadColor, ref pixelBuffer);
+                        }
+                    }
+                    Texture2D pathTex = new Texture2D(MapsFile.MaxMapPixelX * scale, MapsFile.MaxMapPixelY * scale);
+                    pathTex.SetPixels32(pixelBuffer);
+                    pathTex.Apply();
+
+                    byte[] png = pathTex.EncodeToPNG();
+
+                    File.WriteAllBytes(Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, "BasicRoads-paths.png"), png);
+                    return "Exported path data to PNG file.";
+                }
+            }
+
         }
 
         #endregion
