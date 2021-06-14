@@ -399,7 +399,8 @@ namespace RoleplayRealism
         private static void BedActivation(RaycastHit hit)
         {
             IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
-            uiManager.PushWindow(new DaggerfallRestWindow(uiManager, true));
+            //uiManager.PushWindow(new DaggerfallRestWindow(uiManager, true));
+            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Rest, new object[] { uiManager, false }));
         }
 
         private static int AdjustWeaponHitChanceMod(DaggerfallEntity attacker, DaggerfallEntity target, int hitChanceMod, int weaponAnimTime, DaggerfallUnityItem weapon)
