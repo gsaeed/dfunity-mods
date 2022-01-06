@@ -21,6 +21,7 @@ namespace Archaeologists
         internal const string SMALLDUNGEON_MSG = "Actually that dungeon is really small, so you wont be needing a free locator device.";
 
         private Vector3 questTargetPos = Vector3.zero;
+        private bool mapNoteAdded;
 
         Texture2D indicatorTexure;
         Vector2 indicatorSize;
@@ -105,8 +106,25 @@ namespace Archaeologists
                 return Vector3.zero;
             }
             Vector3 dungeonBlockPosition = new Vector3(targetMarker.dungeonX * RDBLayout.RDBSide, 0, targetMarker.dungeonZ * RDBLayout.RDBSide);
-            return dungeonBlockPosition + targetMarker.flatPosition + buildingOrigin;
+            var loc = dungeonBlockPosition + targetMarker.flatPosition + buildingOrigin;
+            var gameobjectAutomap = GameObject.Find("Automap/InteriorAutomap");
+            Automap automap;
+            if (!mapNoteAdded)
+            {
+                if (gameobjectAutomap)
+                {
+                    automap = gameobjectAutomap.GetComponent<Automap>();
+                    if (automap)
+                    {
+                        int id = automap.listUserNoteMarkers.AddNext(new Automap.NoteMarker(loc, "Quest Item"));
+                        automap.CreateUserMarker(id, loc);
+                        mapNoteAdded = true;
+                    }
+                }
+            }
+            return loc;
         }
+
 
         private static void RemoveActiveDevices(ItemCollection collection)
         {
