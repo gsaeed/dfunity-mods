@@ -7,6 +7,7 @@
     "ModDescription": "Archaeologists guild with quest target locator device and language skill rework",
     "GUID": "5054c2f4-7679-41d5-803e-da737caa69ef",
     "Files": [
+<<<<<<< HEAD
         "Assets/Game/Mods/dfunity-mods/Archaeologists/modsettings.json",
         "Assets/Game/Mods/dfunity-mods/Archaeologists/ItemTemplates.json",
         "Assets/Game/Mods/dfunity-mods/Archaeologists/Archaeologists.dfmod.json",
