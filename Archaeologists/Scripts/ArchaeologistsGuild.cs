@@ -131,6 +131,8 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Orcish,
                 DFCareer.Skills.Spriggan,
                 DFCareer.Skills.Stealth,
+                DFCareer.Skills.Streetwise,
+                DFCareer.Skills.Etiquette,
             };
 
         protected static List<DFCareer.Skills> trainingSkills = new List<DFCareer.Skills>() {
