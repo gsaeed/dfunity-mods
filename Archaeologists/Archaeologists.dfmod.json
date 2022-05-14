@@ -62,7 +62,9 @@
         "Assets/Game/Mods/dfunity-mods/Archaeologists/Quests/JHAR021.txt",
         "Assets/Game/Mods/dfunity-mods/Archaeologists/Quests/JHAR021c.txt",
         "Assets/Game/Mods/dfunity-mods/Archaeologists/Quests/JHAR022.txt",
-        "Assets/Game/Mods/dfunity-mods/Archaeologists/Quests/JHAR024.txt"
+        "Assets/Game/Mods/dfunity-mods/Archaeologists/Quests/JHAR024.txt",
+        "Assets/Game/Mods/dfunity-mods/Archaeologists/modsettings.json",
+        "Assets/Game/Mods/dfunity-mods/Archaeologists/Quests/JHAR025.txt"
     ],
     "Contributes": {
         "BooksMapping": [
