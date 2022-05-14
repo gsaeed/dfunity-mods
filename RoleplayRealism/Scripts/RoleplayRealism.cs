@@ -66,6 +66,7 @@ namespace RoleplayRealism
         [Invoke(StateManager.StateTypes.Start, 0)]
         public static void Init(InitParams initParams)
         {
+            Debug.Log("rpp init");
             mod = initParams.Mod;
             var go = new GameObject(mod.Title);
             go.AddComponent<RoleplayRealism>();
@@ -73,6 +74,7 @@ namespace RoleplayRealism
 
         void Awake()
         {
+            Debug.Log("rpp awake");
             ModSettings settings = mod.GetSettings();
             bool bedSleeping = settings.GetBool("Modules", "bedSleeping");
             bool archery = settings.GetBool("Modules", "advancedArchery");
@@ -108,7 +110,7 @@ namespace RoleplayRealism
         public static void InitMod(bool bedSleeping, bool archery, bool riding, bool encumbrance, bool bandaging, bool shipPorts, bool expulsion, bool climbing, bool weaponSpeed, bool weaponMaterials, bool equipDamage, bool enemyAppearance,
             bool purifyPot, bool autoExtinguishLight, bool classicStrDmgBonus, bool variantNpcs, bool variantResidents, bool fgH2H, bool training)
         {
-            Debug.Log("Begin mod init: RoleplayRealism");
+            Debug.Log("rpp Begin mod init: RoleplayRealism");
 
             Mod rrItemsMod = ModManager.Instance.GetMod(ROLEPLAYREALISMITEMS_MODNAME);
             ModSettings rrItemsSettings = rrItemsMod != null ? rrItemsMod.GetSettings() : null;
