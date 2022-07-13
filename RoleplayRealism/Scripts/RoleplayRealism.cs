@@ -313,37 +313,6 @@ namespace RoleplayRealism
             return 0;
         }
 
-        private static void PlayerGPS_OnMapPixelChanged(DFPosition mapPixel)
-        {
-            // Check if near Northrock Fort
-            if (mapPixel.X >= 937 && mapPixel.X <= 939 && mapPixel.Y >= 50 && mapPixel.Y <= 52)
-            {
-                // In Fort MP 2 messages, in adjacent MP message with track direction
-                if (mapPixel.X == 938 && mapPixel.Y == 51)
-                {
-                    DaggerfallUI.AddHUDText(FORT_VERYNEAR1, 5);
-                    DaggerfallUI.AddHUDText(FORT_VERYNEAR2, 5);
-                }
-                else if (mapPixel.X == 938 && mapPixel.Y == 50)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, "south"), 5);
-                else if (mapPixel.X == 939 && mapPixel.Y == 50)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, "south west"), 5);
-                else if (mapPixel.X == 939 && mapPixel.Y == 51)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, "west"), 5);
-                else if (mapPixel.X == 939 && mapPixel.Y == 52)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, "north west"), 5);
-                else if (mapPixel.X == 938 && mapPixel.Y == 52)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, "north"), 5);
-                else if (mapPixel.X == 937 && mapPixel.Y == 52)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, "north east"), 5);
-                else if (mapPixel.X == 937 && mapPixel.Y == 51)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, "east"), 5);
-                else if (mapPixel.X == 937 && mapPixel.Y == 50)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, "south east"), 5);
-            }
-        }
-
-
         public static int CalculateMaxBankLoan()
         {
             return GameManager.Instance.PlayerEntity.Level * loanMaxPerLevel;
