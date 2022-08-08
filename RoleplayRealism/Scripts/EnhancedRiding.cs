@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game
         AudioClip trampleFemaleClip;
 
         public bool RealisticMovement { get; set; }
+        public bool CanHurtCivilianNPCs { get; set; }
         public bool TerrainFollowing { get; set; }
 
         public bool GallopingInTowns { get; set; }
@@ -135,6 +136,7 @@ namespace DaggerfallWorkshop.Game
         private void OnTriggerEnter(Collider other)
         {
             if (TrampleCivilians && playerMotor.IsRiding && playerMotor.IsRunning)
+
             {
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 Transform npcTransform = other.gameObject.transform;
