@@ -101,6 +101,7 @@ namespace RoleplayRealism
                 LootTables.OnLootSpawned += RandomConditionLootItems;       // Container random loot
 
                 FormulaHelper.RegisterOverride(mod, "CalculateCost", (Func<int, int, int, int>)CalculateConditionCost);
+                FormulaHelper.RegisterOverride(mod, "CalculateBaseCost", (Func <DaggerfallUnityItem, int >)CalculateBaseConditionCost);
                 FormulaHelper.RegisterOverride(mod, "CalculateItemRepairCost", (Func<int, int, int, int, IGuild, int>)CalculateItemRepairCost);
 
                 if (storeQualityItems)
@@ -241,6 +242,23 @@ namespace RoleplayRealism
                     float conditionMod = UnityEngine.Random.Range(0.2f, 0.75f);
                     item.currentCondition = (int)(item.maxCondition * conditionMod);
                 }
+            }
+        }
+
+        public static int CalculateBaseConditionCost(DaggerfallUnityItem item)
+        {
+            {
+
+                int cost = item.value;
+                if (item.ConditionPercentage != -1)
+                {
+                    cost *= item.ConditionPercentage / 100;
+                }
+
+                if (cost < 1)
+                    cost = 1;
+
+                return cost;
             }
         }
 
