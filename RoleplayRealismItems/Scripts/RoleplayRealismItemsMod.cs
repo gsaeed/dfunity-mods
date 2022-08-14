@@ -250,9 +250,9 @@ namespace RoleplayRealism
             {
 
                 int cost = item.value;
-                if (item.ConditionPercentage != -1)
+                if (item.ConditionPercentage != -1 && item.ConditionPercentage < 100 )
                 {
-                    cost *= item.ConditionPercentage / 100;
+                    cost = (int)(cost * (float)item.ConditionPercentage / 100);
                 }
 
                 if (cost < 1)
