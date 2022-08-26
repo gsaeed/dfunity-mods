@@ -282,22 +282,29 @@ namespace RoleplayRealism
                     DaggerfallUI.AddHUDText(FORT_VERYNEAR2, 5);
                 }
                 else if (mapPixel.X == 938 && mapPixel.Y == 50)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("south")), 5);
+                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("south")),
+                        5);
                 else if (mapPixel.X == 939 && mapPixel.Y == 50)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("southwest")), 5);
+                    DaggerfallUI.AddHUDText(
+                        String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("southwest")), 5);
                 else if (mapPixel.X == 939 && mapPixel.Y == 51)
                     DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("west")), 5);
                 else if (mapPixel.X == 939 && mapPixel.Y == 52)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("northwest")), 5);
+                    DaggerfallUI.AddHUDText(
+                        String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("northwest")), 5);
                 else if (mapPixel.X == 938 && mapPixel.Y == 52)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("north")), 5);
+                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("north")),
+                        5);
                 else if (mapPixel.X == 937 && mapPixel.Y == 52)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("northeast")), 5);
+                    DaggerfallUI.AddHUDText(
+                        String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("northeast")), 5);
                 else if (mapPixel.X == 937 && mapPixel.Y == 51)
                     DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("east")), 5);
                 else if (mapPixel.X == 937 && mapPixel.Y == 50)
-                    DaggerfallUI.AddHUDText(String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("southeast")), 5);
+                    DaggerfallUI.AddHUDText(
+                        String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("southeast")), 5);
             }
+
         }
 
         static int GetMasterArmBuildingKey(int index)
