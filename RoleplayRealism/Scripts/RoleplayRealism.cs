@@ -296,7 +296,6 @@ namespace RoleplayRealism
                     DaggerfallUI.AddHUDText(
                         String.Format(FORT_NEAR, TextManager.Instance.GetLocalizedText("southeast")), 5);
             }
-
         }
 
         static int GetMasterArmBuildingKey(int index)
