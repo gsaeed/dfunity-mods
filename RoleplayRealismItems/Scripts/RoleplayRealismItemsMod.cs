@@ -973,8 +973,8 @@ namespace RoleplayRealism
                     return;
                 case DFCareer.Skills.Thaumaturgy:
                     playerEntity.AddSpell(GetClassicSpell(2));      // Buoyancy
-                    if (primary)
-                        playerEntity.AddSpell(riseSpell);           // Rise
+                    //if (primary)
+                    //  playerEntity.AddSpell(riseSpell);           // Rise
                     return;
             }
         }
