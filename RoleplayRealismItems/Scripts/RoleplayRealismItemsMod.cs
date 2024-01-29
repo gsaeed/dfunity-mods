@@ -973,8 +973,8 @@ namespace RoleplayRealism
                     return;
                 case DFCareer.Skills.Thaumaturgy:
                     playerEntity.AddSpell(GetClassicSpell(2));      // Buoyancy
-                    //if (primary)
-                    //  playerEntity.AddSpell(riseSpell);           // Rise
+                    if (primary)
+                      playerEntity.AddSpell(WaterBreathingSpell);           // WaterBreathingSpell
                     return;
             }
         }
@@ -1097,9 +1097,11 @@ namespace RoleplayRealism
                 })
              },
         };
-        static EffectBundleSettings riseSpell => new EffectBundleSettings()
+
+        static EffectBundleSettings WaterBreathingSpell = new EffectBundleSettings()
         {
-            Name = Localize("rise"),
+            Name = "Breath hold",
+
             Version = EntityEffectBroker.CurrentSpellVersion,
             BundleType = BundleTypes.Spell,
             TargetType = TargetTypes.CasterOnly,
@@ -1107,8 +1109,8 @@ namespace RoleplayRealism
             Icon = new SpellIcon() { index = 13 },
             Effects = new EffectEntry[]
             {
-                new EffectEntry(Levitate.EffectKey, new EffectSettings() {
-                    DurationBase = 1, DurationPlus = 1, DurationPerLevel = 2
+                new EffectEntry(WaterBreathing.EffectKey, new EffectSettings() {
+                    DurationBase = 12, DurationPlus = 4, DurationPerLevel = 1
                 })
             },
         };
