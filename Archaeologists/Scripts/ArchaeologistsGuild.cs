@@ -215,8 +215,12 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override int ReducedIdentifyCost(int price)
         {
-            // Free identification at rank 5
-            return (rank >= 5) ? 0 : price;
+            if (rank < 1)
+                return price;
+            if (rank > 3)
+                return 0;
+            else
+                return (int)(price * (1f - 0.25f * rank) + 0.5f);
         }
 
         public override bool AvoidDeath()
