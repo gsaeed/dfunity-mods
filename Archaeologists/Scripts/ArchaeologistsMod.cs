@@ -24,8 +24,10 @@ namespace Archaeologists
     public class ArchaeologistsMod : MonoBehaviour
     {
         static Mod mod;
-
+        public static int StartingRankForReducedIdentify { get; set; } = 1;
+        public static int StartingRankForFreeIdentify { get; set; } = 4;
         public static bool RestrictGuildRankMagesGuild { get; private set; }
+        public static bool UseReducedIdentifyCost { get; private set; }
 
         [Invoke(StateManager.StateTypes.Start, 0)]
         public static void Init(InitParams initParams)
@@ -48,7 +50,17 @@ namespace Archaeologists
             ModSettings settings = mod.GetSettings();
             RestrictGuildRankMagesGuild = settings.GetBool("General", "RestrictGuildRankMagesGuild");
             bool overridePacification = settings.GetBool("General", "OverridePacification");
+
             bool teleportationPotions = settings.GetBool("General", "TeleportationPotions");
+
+            UseReducedIdentifyCost = settings.GetBool("GuildIdentifyCost", "UseReducedIdentifyCost");
+            StartingRankForReducedIdentify = settings.GetInt("GuildIdentifyCost", "StartingRankForReducedIdentify");
+            StartingRankForFreeIdentify = settings.GetInt("GuildIdentifyCost", "StartingRankForFreeIdentify");
+
+
+            if (StartingRankForFreeIdentify < StartingRankForReducedIdentify)
+                StartingRankForReducedIdentify = StartingRankForFreeIdentify;
+
 
             // Register the new faction id's
             if (RegisterFactionIds())

@@ -29,6 +29,39 @@
                 }
             ],
             "$version": "v1"
+        },
+        {
+            "Name": "GuildIdentifyCost",
+            "Description": "Guild Settings for Reduced Identify Cost",
+            "IsAdvanced": false,
+            "Keys": [
+                {
+                    "Value": true,
+                    "Name": "UseReducedIdentifyCost",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Min": 0,
+                    "Max": 8,
+                    "Value": 1,
+                    "Name": "StartingRankForReducedIdentify",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 0,
+                    "Max": 9,
+                    "Value": 4,
+                    "Name": "StartingRankForFreeIdentify",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                }
+            ],
+            "$version": "v1"
         }
     ]
 }

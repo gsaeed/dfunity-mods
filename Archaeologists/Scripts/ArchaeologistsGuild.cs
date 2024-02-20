@@ -215,12 +215,17 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override int ReducedIdentifyCost(int price)
         {
-            if (rank < 1)
+            if (!ArchaeologistsMod.UseReducedIdentifyCost)
                 return price;
-            if (rank > 3)
+
+            if (rank < ArchaeologistsMod.StartingRankForReducedIdentify)
+                return price;
+
+            if (rank >= ArchaeologistsMod.StartingRankForFreeIdentify)
                 return 0;
-            else
-                return (int)(price * (1f - 0.25f * rank) + 0.5f);
+            
+            float reduction = 1f / (ArchaeologistsMod.StartingRankForFreeIdentify - ArchaeologistsMod.StartingRankForReducedIdentify + 1);
+            return Mathf.RoundToInt(price * (1f - reduction * rank));
         }
 
         public override bool AvoidDeath()
