@@ -112,17 +112,17 @@ namespace RoleplayRealism
 
             if (enemyEquipment)
             {
-                EnemyEntity.AssignEnemyEquipment = AssignEnemyStartingEquipment;
+                EnemyEntity.AssignEnemyEquipment += AssignEnemyStartingEquipment;
             }
 
             StartGameBehaviour startGameBehaviour = GameManager.Instance.StartGameBehaviour;
             if (skillStartEquip)
             {
-                startGameBehaviour.AssignStartingEquipment = AssignSkillEquipment;
+                startGameBehaviour.AssignStartingEquipment += AssignSkillEquipment;
             }
             if (skillStartSpells)
             {
-                startGameBehaviour.AssignStartingSpells = AssignSkillSpellbook;
+                startGameBehaviour.AssignStartingSpells += AssignSkillSpellbook;
             }
 
             if (weaponBalance)
@@ -812,7 +812,8 @@ namespace RoleplayRealism
             AddOrEquipWornItem(playerEntity, casualPants, true);
 
             // Add spellbook, all players start with one - also a little gold and a crappy iron dagger for those with no weapon skills.
-            playerEntity.Items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
+            if(!playerEntity.Items.Contains(ItemGroups.MiscItems, (int)MiscItems.Spellbook))
+                playerEntity.Items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
             playerEntity.GoldPieces += UnityEngine.Random.Range(5, playerEntity.Career.Luck);
             playerEntity.Items.AddItem(ItemBuilder.CreateWeapon(Weapons.Dagger, WeaponMaterialTypes.Iron));
 
@@ -834,11 +835,11 @@ namespace RoleplayRealism
             Genders gender = playerEntity.Gender;
             Races race = playerEntity.Race;
 
-            bool upgrade = Dice100.SuccessRoll(playerEntity.Career.Luck / (playerEntity.Career.Luck < 56 ? 2 : 1));
-            WeaponMaterialTypes weaponMaterial = WeaponMaterialTypes.Iron;
-            if ((upgrade && !playerEntity.Career.IsMaterialForbidden(DFCareer.MaterialFlags.Steel)) || playerEntity.Career.IsMaterialForbidden(DFCareer.MaterialFlags.Iron))
+            bool upgrade = Dice100.SuccessRoll((playerEntity.Career.Luck + 20)/ (playerEntity.Career.Luck < 56 ? 2 : 1));
+            WeaponMaterialTypes weaponMaterial = !playerEntity.Career.IsMaterialForbidden(DFCareer.MaterialFlags.Steel) ? WeaponMaterialTypes.Steel : WeaponMaterialTypes.Iron;
+            if ((upgrade && !playerEntity.Career.IsMaterialForbidden(DFCareer.MaterialFlags.Silver)) || playerEntity.Career.IsMaterialForbidden(DFCareer.MaterialFlags.Iron))
             {
-                weaponMaterial = WeaponMaterialTypes.Steel;
+                weaponMaterial = WeaponMaterialTypes.Silver;
             }
             ArmorMaterialTypes armorMaterial = ArmorMaterialTypes.Leather;
             if ((upgrade && !playerEntity.Career.IsArmorForbidden(DFCareer.ArmorFlags.Chain)) || playerEntity.Career.IsArmorForbidden(DFCareer.ArmorFlags.Leather))
@@ -849,9 +850,12 @@ namespace RoleplayRealism
             switch (skill)
             {
                 case DFCareer.Skills.Archery:
-                    AddOrEquipWornItem(playerEntity, ItemBuilder.CreateWeapon(Weapons.Short_Bow, weaponMaterial));
+                    if (UnityEngine.Random.Range(0,4) == 0)
+                        AddOrEquipWornItem(playerEntity, ItemBuilder.CreateWeapon(Weapons.Long_Bow, weaponMaterial));
+                    else
+                        AddOrEquipWornItem(playerEntity, ItemBuilder.CreateWeapon(Weapons.Short_Bow, weaponMaterial));
                     DaggerfallUnityItem arrowPile = ItemBuilder.CreateWeapon(Weapons.Arrow, WeaponMaterialTypes.Iron);
-                    arrowPile.stackCount = 30;
+                    arrowPile.stackCount = UnityEngine.Random.Range(20,51);
                     items.AddItem(arrowPile);
                     return;
                 case DFCareer.Skills.Axe:
@@ -875,7 +879,7 @@ namespace RoleplayRealism
                 case DFCareer.Skills.Lockpicking:
                     items.AddItem(ItemBuilder.CreateRandomPotion()); return;
                 case DFCareer.Skills.LongBlade:
-                    AddOrEquipWornItem(playerEntity, ItemBuilder.CreateWeapon(Dice100.SuccessRoll(50) ? Weapons.Saber : Weapons.Broadsword, weaponMaterial)); return;
+                    AddOrEquipWornItem(playerEntity, ItemBuilder.CreateWeapon(Dice100.SuccessRoll(50) ? Weapons.Saber : Weapons.Longsword, weaponMaterial)); return;
                 case DFCareer.Skills.Medical:
                     DaggerfallUnityItem bandages = ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Bandage);
                     bandages.stackCount = 4;
