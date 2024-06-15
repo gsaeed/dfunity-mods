@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         const int recallEffectId = 94;
         private const int replaceMarkCost = 10000;
         private const int ArchGuildLocationsBookId = 1000;
+        public static int NumDaysToCheckForPromotion { get; set; } = -1;
 
         #endregion
 
