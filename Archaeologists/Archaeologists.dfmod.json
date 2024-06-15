@@ -1,4 +1,9 @@
 {
+    "Contributes": {
+        "BooksMapping": [
+            "ArchsGuildBooks"
+        ]
+    },
     "ModTitle": "Archaeologists",
     "ModVersion": "2.4",
     "ModAuthor": "Hazelnut tweaked by Asesino",
