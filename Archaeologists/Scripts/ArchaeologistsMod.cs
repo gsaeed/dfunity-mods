@@ -24,6 +24,7 @@ namespace Archaeologists
     public class ArchaeologistsMod : MonoBehaviour
     {
         static Mod mod;
+        public static bool AssignCart = false;
         public static int StartingRankForReducedIdentify { get; set; } = 1;
         public static int StartingRankForFreeIdentify { get; set; } = 4;
         public static bool RestrictGuildRankMagesGuild { get; private set; }
@@ -40,6 +41,7 @@ namespace Archaeologists
         void Awake()
         {
             InitMod();
+            mod.MessageReceiver = MessageReceiver;
             mod.IsReady = true;
         }
 
@@ -112,6 +114,24 @@ namespace Archaeologists
             Debug.Log("Finished mod init: Archaeologists");
         }
 
+        public static void MessageReceiver(string message, object data, DFModMessageCallback callback)
+        {
+
+            switch (message)
+            {
+                case "AssignCart":
+                    if (data is bool)
+                    {
+                        AssignCart = (bool)data;
+                        if ((bool)data)
+                            ArchaeologistsGuild.welcomeTokens = ArchaeologistsGuild.welcomewithcartTokens;
+                        else
+                            ArchaeologistsGuild.welcomeTokens = ArchaeologistsGuild.welcomewithoutcartTokens;
+                    }
+                    break;
+
+            }
+        }
         private static bool RegisterFactionIds()
         {
             bool success = FactionFile.RegisterCustomFaction(1000, new FactionFile.FactionData()

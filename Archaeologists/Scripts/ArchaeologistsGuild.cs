@@ -38,7 +38,56 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         // Guild messages - must clone any that contain macros before returning.
 
-        protected static TextFile.Token[] welcomeTokens =
+        public static readonly TextFile.Token[] welcomewithcartTokens =
+{
+            TextFile.CreateTextToken("Excellent, %pcn, welcome to the Archaeologists! "), newLine, newLine,
+
+            TextFile.CreateTextToken("We'll get you started on field work as soon as possible. "), newLine,
+            TextFile.CreateTextToken("You'll begin your Archaeologists career with the title of "), newLine,
+            TextFile.CreateTextToken("%lev. However, with hard work and dedication, "), newLine,
+            TextFile.CreateTextToken("you may be recognised for promotion soon enough. Please"), newLine,
+            TextFile.CreateTextToken("do make use of our training facilities to study languages "), newLine,
+            TextFile.CreateTextToken("or to improve your field work skills. "), newLine, newLine,
+
+            TextFile.CreateTextToken("Here's a book containing guild ranks and locations of all guild "), newLine,
+            TextFile.CreateTextToken("halls. Also here's a Mark of Recall, and a free locator device "), newLine,
+            TextFile.CreateTextToken("to try out the next time you find yourself lost in a labyrinth "), newLine,
+            TextFile.CreateTextToken("unable to find whatever it is you're seeking. Locators look like"), newLine,
+            TextFile.CreateTextToken("Ankh symbols and will activate once you've explored enough. "), newLine, newLine,
+
+            TextFile.CreateTextToken("Locators are provided free for guild quests involving dungeon "), newLine,
+            TextFile.CreateTextToken("delving, but you can also purchase them from us for a price, "), newLine,
+            TextFile.CreateTextToken("with discounts given for any relics you can find for the guild. "), newLine, newLine,
+
+            TextFile.CreateTextToken("If you don't already own a small cart, we provide you one."), newLine,
+            TextFile.CreateTextToken("After all, we can't have our precious artifacts damaged, or dropped."), newLine,
+            TextFile.CreateTextToken("Happy exploring!"), newLine, newLine
+        };
+
+        public static readonly TextFile.Token[] welcomewithoutcartTokens =
+{
+            TextFile.CreateTextToken("Excellent, %pcn, welcome to the Archaeologists! "), newLine, newLine,
+
+            TextFile.CreateTextToken("We'll get you started on field work as soon as possible. "), newLine,
+            TextFile.CreateTextToken("You'll begin your Archaeologists career with the title of "), newLine,
+            TextFile.CreateTextToken("%lev. However, with hard work and dedication, "), newLine,
+            TextFile.CreateTextToken("you may be recognised for promotion soon enough. Please"), newLine,
+            TextFile.CreateTextToken("do make use of our training facilities to study languages "), newLine,
+            TextFile.CreateTextToken("or to improve your field work skills. "), newLine, newLine,
+
+            TextFile.CreateTextToken("Here's a book containing guild ranks and locations of all guild "), newLine,
+            TextFile.CreateTextToken("halls. Also here's a Mark of Recall, and a free locator device "), newLine,
+            TextFile.CreateTextToken("to try out the next time you find yourself lost in a labyrinth "), newLine,
+            TextFile.CreateTextToken("unable to find whatever it is you're seeking. Locators look like"), newLine,
+            TextFile.CreateTextToken("Ankh symbols and will activate once you've explored enough. "), newLine, newLine,
+
+            TextFile.CreateTextToken("Locators are provided free for guild quests involving dungeon "), newLine,
+            TextFile.CreateTextToken("delving, but you can also purchase them from us for a price, "), newLine,
+            TextFile.CreateTextToken("with discounts given for any relics you can find for the guild. "), newLine, newLine,
+        };
+
+
+        public static TextFile.Token[] welcomeTokens =
         {
             TextFile.CreateTextToken("Excellent, %pcn, welcome to the Archaeologists! "), newLine, newLine,
 
@@ -57,7 +106,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
             TextFile.CreateTextToken("Locators are provided free for guild quests involving dungeon "), newLine,
             TextFile.CreateTextToken("delving, but you can also purchase them from us for a price, "), newLine,
-            TextFile.CreateTextToken("with discounts given for any relics you can find for the guild. "), newLine, newLine
+            TextFile.CreateTextToken("with discounts given for any relics you can find for the guild. "), newLine, newLine,
         };
 
         protected static TextFile.Token[] eligibleTokens =
@@ -563,9 +612,23 @@ namespace DaggerfallWorkshop.Game.Guilds
             // Give a guild hall locations book.
             GivePlayerLocationsBook();
             // Give player a free locator device.
+            if (ArchaeologistsMod.AssignCart)
+                GivePlayerSmallCart();
+
             GameManager.Instance.PlayerEntity.Items.AddItem(new LocatorItem(), ItemCollection.AddPosition.DontCare, true);
         }
 
+        private static void GivePlayerSmallCart()
+        {
+            bool hasCart =
+                GameManager.Instance.PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart);
+
+            if (!hasCart)
+            {
+                GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreateItem(ItemGroups.Transportation, (int)Transportation.Small_cart));
+            }
+
+        }
         private static void GivePlayerMarkOfRecall()
         {
             DaggerfallUnityItem item = ItemBuilder.CreateItem(ItemGroups.Jewellery, (int)Jewellery.Mark);
