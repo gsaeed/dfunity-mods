@@ -38,7 +38,8 @@ namespace RoleplayRealism
 
         static bool newWeapons = false;
         static bool newArmor = false;
-
+        public static bool ApplyStartingItemsToMinorSkills = false;
+        public static bool TreatAllStartingItemsAsPrimarySkills = false;
         static Dictionary<string, string> textDataBase = null;
 
         [Invoke(StateManager.StateTypes.Start, 0)]
@@ -63,6 +64,8 @@ namespace RoleplayRealism
             newWeapons = settings.GetBool("Modules", "newWeapons");
             newArmor = settings.GetBool("Modules", "newArmor");
             bool alchemistPotions = settings.GetBool("Modules", "alchemistPotions");
+            ApplyStartingItemsToMinorSkills = settings.GetValue<bool>("Modules", "ApplyStartingItemsToMinorSkills");
+            TreatAllStartingItemsAsPrimarySkills = settings.GetValue<bool>("Modules", "TreatAllStartingItemsAsPrimarySkills");
 
             LoadTextData();
 
@@ -794,6 +797,16 @@ namespace RoleplayRealism
             AssignSkillItems(playerEntity, playerEntity.Career.MajorSkill2);
             AssignSkillItems(playerEntity, playerEntity.Career.MajorSkill3);
 
+            if (ApplyStartingItemsToMinorSkills)
+            {
+                AssignSkillItems(playerEntity, playerEntity.Career.MinorSkill1);
+                AssignSkillItems(playerEntity, playerEntity.Career.MinorSkill2);
+                AssignSkillItems(playerEntity, playerEntity.Career.MinorSkill3);
+                AssignSkillItems(playerEntity, playerEntity.Career.MinorSkill4);
+                AssignSkillItems(playerEntity, playerEntity.Career.MinorSkill5);
+                AssignSkillItems(playerEntity, playerEntity.Career.MinorSkill6);
+            }
+
             // Starting clothes are gender-specific, randomise shirt dye and pants variant
             DaggerfallUnityItem shortShirt = null;
             DaggerfallUnityItem casualPants = null;
@@ -933,6 +946,16 @@ namespace RoleplayRealism
             AssignSkillSpells(playerEntity, playerEntity.Career.MajorSkill2);
             AssignSkillSpells(playerEntity, playerEntity.Career.MajorSkill3);
 
+            if (ApplyStartingItemsToMinorSkills)
+            {
+                AssignSkillSpells(playerEntity, playerEntity.Career.MinorSkill1);
+                AssignSkillSpells(playerEntity, playerEntity.Career.MinorSkill2);
+                AssignSkillSpells(playerEntity, playerEntity.Career.MinorSkill3);
+                AssignSkillSpells(playerEntity, playerEntity.Career.MinorSkill4);
+                AssignSkillSpells(playerEntity, playerEntity.Career.MinorSkill5);
+                AssignSkillSpells(playerEntity, playerEntity.Career.MinorSkill6);
+            }
+
             Debug.Log("Starting Spells: Assigning Finished");
         }
 
@@ -941,6 +964,9 @@ namespace RoleplayRealism
             ItemCollection items = playerEntity.Items;
             Genders gender = playerEntity.Gender;
             Races race = playerEntity.Race;
+
+            if (TreatAllStartingItemsAsPrimarySkills)
+                primary = true;
 
             switch (skill)
             {
@@ -976,9 +1002,9 @@ namespace RoleplayRealism
                     }
                     return;
                 case DFCareer.Skills.Thaumaturgy:
-                    playerEntity.AddSpell(GetClassicSpell(2));      // Buoyancy
                     if (primary)
-                      playerEntity.AddSpell(WaterBreathingSpell);           // WaterBreathingSpell
+                        playerEntity.AddSpell(GetClassicSpell(2)); // Buoyancy
+                    playerEntity.AddSpell(WaterBreathingSpell);    // WaterBreathingSpell
                     return;
             }
         }
