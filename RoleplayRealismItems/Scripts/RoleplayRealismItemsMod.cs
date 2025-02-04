@@ -40,6 +40,11 @@ namespace RoleplayRealism
         static bool newArmor = false;
         public static bool ApplyStartingItemsToMinorSkills = false;
         public static bool TreatAllStartingItemsAsPrimarySkills = false;
+        public static int BaseClothingCostMultiplier = 1;
+        public static int FancyClothingCostMultiplier = 1;
+        public static int GemCostMultiplier = 1;
+        public static int JewelleryCostMultiplier = 1;
+        public static bool ConditionBasedPrices = false;
         static Dictionary<string, string> textDataBase = null;
 
         [Invoke(StateManager.StateTypes.Start, 0)]
@@ -55,7 +60,7 @@ namespace RoleplayRealism
             ModSettings settings = mod.GetSettings();
             bool lootRebalance = settings.GetBool("Modules", "lootRebalance");
             bool bandaging = settings.GetBool("Modules", "bandaging");
-            bool conditionBasedPrices = settings.GetBool("Modules", "conditionBasedPrices");
+            ConditionBasedPrices = settings.GetBool("Modules", "conditionBasedPrices");
             bool storeQualityItems = settings.GetBool("Modules", "storeQualityItemCondition");
             bool enemyEquipment = settings.GetBool("Modules", "realisticEnemyEquipment");
             bool skillStartEquip = settings.GetBool("Modules", "skillBasedStartingEquipment");
@@ -66,15 +71,18 @@ namespace RoleplayRealism
             bool alchemistPotions = settings.GetBool("Modules", "alchemistPotions");
             ApplyStartingItemsToMinorSkills = settings.GetValue<bool>("Modules", "ApplyStartingItemsToMinorSkills");
             TreatAllStartingItemsAsPrimarySkills = settings.GetValue<bool>("Modules", "TreatAllStartingItemsAsPrimarySkills");
-
+            BaseClothingCostMultiplier = settings.GetValue<int>("Modules", "BaseClothingCostMultiplier");
+            FancyClothingCostMultiplier = settings.GetValue<int>("Modules", "FancyClothingCostMultiplier");
+            GemCostMultiplier = settings.GetValue<int>("Modules", "GemCostMultiplier");
+            JewelleryCostMultiplier = settings.GetValue<int>("Modules", "JewelryCostMultiplier");
             LoadTextData();
 
-            InitMod(lootRebalance, bandaging, conditionBasedPrices, storeQualityItems, enemyEquipment, skillStartEquip, skillStartSpells, weaponBalance, newWeapons, newArmor, alchemistPotions);
+            InitMod(lootRebalance, bandaging,  storeQualityItems, enemyEquipment, skillStartEquip, skillStartSpells, weaponBalance, newWeapons, newArmor, alchemistPotions);
 
             mod.IsReady = true;
         }
 
-        private static void InitMod(bool lootRebalance, bool bandaging, bool conditionBasedPrices, bool storeQualityItems, bool enemyEquipment, bool skillStartEquip, bool skillStartSpells, bool weaponBalance, bool newWeapons, bool newArmor, bool alchemistPotions)
+        private static void InitMod(bool lootRebalance, bool bandaging, bool storeQualityItems, bool enemyEquipment, bool skillStartEquip, bool skillStartSpells, bool weaponBalance, bool newWeapons, bool newArmor, bool alchemistPotions)
         {
             Debug.Log("Begin mod init: RoleplayRealismItems");
 
@@ -98,7 +106,7 @@ namespace RoleplayRealism
                 PlayerActivate.OnLootSpawned += StackableBandages_OnLootSpawned;
             }
 
-            if (conditionBasedPrices)
+            if (ConditionBasedPrices || BaseClothingCostMultiplier > 1 || FancyClothingCostMultiplier > 1 || GemCostMultiplier > 1 || JewelleryCostMultiplier > 1)
             {
                 EnemyEntity.OnLootSpawned += RandomConditionEnemyItems;     // Enemy random loot (not allocated equipment)
                 LootTables.OnLootSpawned += RandomConditionLootItems;       // Container random loot
@@ -235,6 +243,9 @@ namespace RoleplayRealism
 
         private static void RandomConditionFoundLootItems(ItemCollection lootItems)
         {
+            if (!ConditionBasedPrices)
+                return;
+            
             for (int i = 0; i < lootItems.Count; i++)
             {
                 DaggerfallUnityItem item = lootItems.GetItem(i);
@@ -251,10 +262,26 @@ namespace RoleplayRealism
         public static int CalculateBaseConditionCost(DaggerfallUnityItem item)
         {
             {
-
                 int cost = item.value;
+                if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
+                {
+                    if (item.LongName.ToLower().Contains("formal") ||
+                        item.LongName.ToLower().Contains("eodoric") ||
+                        item.LongName.ToLower().Contains("evening") ||
+                        item.LongName.ToLower().Contains("fancy") ||
+                        item.LongName.ToLower().Contains("tall"))
+                        cost *= FancyClothingCostMultiplier;
+                    else
+                        cost *= BaseClothingCostMultiplier;
+                }
+                if (item.ItemGroup == ItemGroups.Gems)
+                    cost *= GemCostMultiplier;
 
-                if (item.ConditionPercentage != -1 && item.ConditionPercentage < 100 )
+                if (item.ItemGroup == ItemGroups.Jewellery)
+                    cost *= JewelleryCostMultiplier;
+
+
+                if (ConditionBasedPrices && item.ConditionPercentage != -1 && item.ConditionPercentage < 100 )
                 {
                     cost = (int)(cost * (float)item.ConditionPercentage / 100);
                 }
@@ -268,7 +295,7 @@ namespace RoleplayRealism
 
         public static int CalculateConditionCost(int baseValue, int shopQuality, int conditionPercentage = -1)
         {
-            float conditionMod = (conditionPercentage == -1) ? 1f : Mathf.Max((float)conditionPercentage / 100, 0.2f);
+            float conditionMod = (conditionPercentage == -1 || !ConditionBasedPrices) ? 1f : Mathf.Max((float)conditionPercentage / 100, 0.2f);
 
             int cost = (int)(baseValue * conditionMod);
 

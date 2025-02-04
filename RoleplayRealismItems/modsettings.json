@@ -14,6 +14,42 @@
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 },
                 {
+                    "Min": 1,
+                    "Max": 50,
+                    "Value": 1,
+                    "Name": "BaseClothingCostMultiplier",
+                    "Description": "If enabled,  formal clothing is multiplied by the multiplier",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 1,
+                    "Max": 50,
+                    "Value": 1,
+                    "Name": "FancyClothingCostMultiplier",
+                    "Description": "This is separate to BaseCost - If cloth is fancy, use this value else use BaseClothing value",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 1,
+                    "Max": 100,
+                    "Value": 1,
+                    "Name": "GemCostMultiplier",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 1,
+                    "Max": 100,
+                    "Value": 1,
+                    "Name": "JewelryCostMultiplier",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
                     "Value": true,
                     "Name": "bandaging",
                     "Description": "Allows bandages to stack, and to be used for healing based on medical skill",
