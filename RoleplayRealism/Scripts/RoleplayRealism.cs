@@ -55,7 +55,7 @@ namespace RoleplayRealism
         public static string FORT_VERYNEAR1 => Localize("fortVerynear1");
         public static string FORT_VERYNEAR2 => Localize("fortVerynear2");
         public static string FORT_NEAR => Localize("fortNear");
-
+        public static int TrainingTallyMultiplier = 1;
         static Mod mod;
         static int loanMaxPerLevel;
         static bool travelOptionsEnabled;
@@ -93,9 +93,10 @@ namespace RoleplayRealism
             bool variantNpcs = settings.GetBool("Modules", "variantNpcs");
             bool variantResidents = settings.GetBool("Modules", "variantResidents");
             bool fgH2H = settings.GetBool("Modules", "fightersTeachHandToHand");
-
             bool riding = settings.GetBool("EnhancedRiding", "enhancedRiding");
             bool training = settings.GetBool("RefinedTraining", "refinedTraining");
+
+            TrainingTallyMultiplier = settings.GetValue<int>("RefinedTraining", "TrainingTallyMultiplier");
 
             loanMaxPerLevel = loanVals[settings.GetInt("Modules", "loanAmountPerLevel")];
             FormulaHelper.RegisterOverride(mod, "CalculateMaxBankLoan", (Func<int>)CalculateMaxBankLoan);

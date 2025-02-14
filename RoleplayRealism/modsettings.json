@@ -223,6 +223,15 @@
                     "Description": "Enables intensive training option for a session per day for five days, for extra cost.",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Min": 1,
+                    "Max": 5,
+                    "Value": 1,
+                    "Name": "TrainingTallyMultiplier",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
                 }
             ],
             "$version": "v1"
