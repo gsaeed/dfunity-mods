@@ -183,6 +183,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Stealth,
                 DFCareer.Skills.Streetwise,
                 DFCareer.Skills.Etiquette,
+                DFCareer.Skills.Thaumaturgy
             };
 
         protected static List<DFCareer.Skills> trainingSkills = new List<DFCareer.Skills>() {
