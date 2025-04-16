@@ -1254,7 +1254,8 @@
         "Assets/Game/Mods/dfunity-mods/RoleplayRealismItems/Textures/ArmorLeather/torso/520_2-0_Ebony.png",
         "Assets/Game/Mods/dfunity-mods/RoleplayRealismItems/Textures/ArmorLeather/torso/520_2-0_Elven.png",
         "Assets/Game/Mods/dfunity-mods/RoleplayRealismItems/Textures/ArmorLeather/torso/520_16-0_Silver.xml",
-        "Assets/Game/Mods/dfunity-mods/RoleplayRealismItems/Textures/ArmorLeather/torso/520_6-0_Steel.xml"
+        "Assets/Game/Mods/dfunity-mods/RoleplayRealismItems/Textures/ArmorLeather/torso/520_6-0_Steel.xml",
+        "Assets/Game/Mods/dfunity-mods/RoleplayRealismItems/Scripts/ItemLightFlail.cs"
     ],
     "ModPreCompile": true,
     "Dependencies": [

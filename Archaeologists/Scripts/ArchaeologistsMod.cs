@@ -129,6 +129,12 @@ namespace Archaeologists
                             ArchaeologistsGuild.welcomeTokens = ArchaeologistsGuild.welcomewithoutcartTokens;
                     }
                     break;
+                case "NumDaysToCheckForPromotion":
+                    if (data is int)
+                    {
+                        ArchaeologistsGuild.NumDaysToCheckForPromotion = (int)data;
+                    }
+                    break;
 
             }
         }
