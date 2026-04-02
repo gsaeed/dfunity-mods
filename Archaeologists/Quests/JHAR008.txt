@@ -47,7 +47,7 @@ Message:  1030
 %qdt:
  _qgiver_ has asked
  me to retrieve a _tri_ from
- a former member of the Archaeologists
+ a former member of the Archaeologists, _dummy_,
  and return it to ___qgiver_
  within =timer_ days.
 

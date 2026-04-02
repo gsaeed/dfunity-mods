@@ -73,5 +73,6 @@
         "Assets/Game/Mods/dfunity-mods/Archaeologists/WorldData/location-16-1264.json",
         "Assets/Game/Mods/dfunity-mods/Archaeologists/WorldData/location-40-517.json"
     ],
-    "ModPreCompile": true
+    "ModPreCompile": true,
+    "ModPatch": false
 }
