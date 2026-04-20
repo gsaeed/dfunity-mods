@@ -116,8 +116,8 @@ namespace Archaeologists
                     automap = gameobjectAutomap.GetComponent<Automap>();
                     if (automap)
                     {
-                        int id = automap.listUserNoteMarkers.AddNext(new Automap.NoteMarker(loc, "Quest Item", Color.red));
-                        automap.CreateUserMarker(id, loc);
+                        int id = automap.listUserNoteMarkers.AddNext(new Automap.NoteMarker(loc, "Quest Item", new Color(1f,0f,1f), 2.5f));
+                        automap.CreateUserMarker(id, loc, new Color(1f, 0f, 1f), 2.5f);
                         mapNoteAdded = true;
                     }
                 }
