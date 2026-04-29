@@ -45,6 +45,7 @@ namespace RoleplayRealism
         public static int GemCostMultiplier = 1;
         public static int JewelleryCostMultiplier = 1;
         public static bool ConditionBasedPrices = false;
+        private static int MaterialMultiplier = 3;
         static Dictionary<string, string> textDataBase = null;
 
         [Invoke(StateManager.StateTypes.Start, 0)]
@@ -68,6 +69,7 @@ namespace RoleplayRealism
             bool weaponBalance = settings.GetBool("Modules", "weaponBalance");
             newWeapons = settings.GetBool("Modules", "newWeapons");
             newArmor = settings.GetBool("Modules", "newArmor");
+            MaterialMultiplier = settings.GetInt("Modules", "MaterialMultiplier");
             bool alchemistPotions = settings.GetBool("Modules", "alchemistPotions");
             ApplyStartingItemsToMinorSkills = settings.GetValue<bool>("Modules", "ApplyStartingItemsToMinorSkills");
             TreatAllStartingItemsAsPrimarySkills = settings.GetValue<bool>("Modules", "TreatAllStartingItemsAsPrimarySkills");
@@ -85,6 +87,9 @@ namespace RoleplayRealism
         private static void InitMod(bool lootRebalance, bool bandaging, bool storeQualityItems, bool enemyEquipment, bool skillStartEquip, bool skillStartSpells, bool weaponBalance, bool newWeapons, bool newArmor, bool alchemistPotions)
         {
             Debug.Log("Begin mod init: RoleplayRealismItems");
+
+            FormulaHelper.RegisterOverride(mod, "GetItemValueMultiplier", (Func<DaggerfallUnityItem, WeaponMaterialTypes, int>)GetItemValueMultiplier);
+
 
             if (lootRebalance)
             {
@@ -175,6 +180,15 @@ namespace RoleplayRealism
             }
 
             Debug.Log("Finished mod init: RoleplayRealismItems");
+        }
+
+        private static int GetItemValueMultiplier(DaggerfallUnityItem item, WeaponMaterialTypes material)
+        {
+            // Base material multipliers are squared to create a more significant gap between materials,
+            // then multiplied by MaterialMultiplier to create a larger gap between item types (since material is only one factor of item value).
+            int[] valueMultipliersByMaterial = new int[] {1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144 };
+
+            return MaterialMultiplier * (item.value + valueMultipliersByMaterial[(int)material]);
         }
 
         public static bool IsItemStackable(DaggerfallUnityItem item)
@@ -1234,6 +1248,7 @@ namespace RoleplayRealism
             new LootChanceMatrix() {key = "LR2", MinGold = 0,   MaxGold = 5,    P1 = 3, P2 = 3, C1 = 1, C2 = 1, C3 = 3, M1 = 3, AM = 0,  WP = 20, MI = 1, CL = 60,BK = 10,M2 = 3, RL = 0 }, //Healer, Orc Shaman
             new LootChanceMatrix() {key = "LR3", MinGold = 0,   MaxGold = 30,   P1 = 3, P2 = 3, C1 = 1, C2 = 1, C3 = 1, M1 = 2, AM = 0,  WP = 20, MI = 1, CL = 95,BK = 45,M2 = 2, RL = 10 },//Spellcasters
         };
+
 
         static void LoadTextData()
         {
