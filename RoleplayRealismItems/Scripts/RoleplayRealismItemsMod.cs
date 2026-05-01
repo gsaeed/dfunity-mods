@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Guilds;
 using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
+using UnityEngine.UI;
 
 namespace RoleplayRealism
 {
@@ -89,6 +90,8 @@ namespace RoleplayRealism
             Debug.Log("Begin mod init: RoleplayRealismItems");
 
             FormulaHelper.RegisterOverride(mod, "GetItemValueMultiplier", (Func<DaggerfallUnityItem, WeaponMaterialTypes, int>)GetItemValueMultiplier);
+            FormulaHelper.RegisterOverride(mod, "SetItemPropertiesCustom", (Func<DaggerfallUnityItem, DaggerfallUnityItem>)SetItemPropertiesCustom);
+            FormulaHelper.RegisterOverride(mod, "ApplyCustomArmorRating", (Func<DaggerfallUnityItem, int, int>)ApplyCustomArmorRating);
 
 
             if (lootRebalance)
@@ -144,8 +147,8 @@ namespace RoleplayRealism
             if (weaponBalance)
             {
                 FormulaHelper.RegisterOverride(mod, "GetMeleeWeaponAnimTime", (Func<PlayerEntity, WeaponTypes, ItemHands, float>)GetMeleeWeaponAnimTime);
-                FormulaHelper.RegisterOverride(mod, "CalculateWeaponMinDamage", (Func<Weapons, int>)CalculateWeaponMinDamage);
-                FormulaHelper.RegisterOverride(mod, "CalculateWeaponMaxDamage", (Func<Weapons, int>)CalculateWeaponMaxDamage);
+                FormulaHelper.RegisterOverride(mod, "CalculateWeaponMinDamage", (Func<Weapons, DaggerfallUnityItem,int>)CalculateWeaponMinDamage);
+                FormulaHelper.RegisterOverride(mod, "CalculateWeaponMaxDamage", (Func<Weapons, DaggerfallUnityItem,int>)CalculateWeaponMaxDamage);
             }
 
             if (newWeapons)
@@ -182,13 +185,98 @@ namespace RoleplayRealism
             Debug.Log("Finished mod init: RoleplayRealismItems");
         }
 
+
+        private static int ApplyCustomDamage(DaggerfallUnityItem item, int initialDamage)
+        {
+            if (item.ItemGroup != ItemGroups.Weapons)
+                return 0;
+            if (item.shortName.Contains("Epic"))
+                return initialDamage;
+            if (item.shortName.Contains("Fine"))
+                return initialDamage / 2;
+            if (item.shortName.Contains("Diminished"))
+                return -initialDamage / 4;
+            if (item.shortName.Contains("Shoddy"))
+                return -initialDamage / 2;
+
+            return 0;
+        }
+
+        private static int ApplyCustomArmorRating(DaggerfallUnityItem item, int baseRating)
+        {
+            if (item.ItemGroup != ItemGroups.Armor)
+                return 0;
+            if (item.shortName.Contains("Epic"))
+                return baseRating;
+            if (item.shortName.Contains("Fine"))
+                return baseRating / 2;
+            if (item.shortName.Contains("Diminished"))
+                return -baseRating / 4;
+            if (item.shortName.Contains("Shoddy"))
+                return -baseRating / 2;
+
+            return 0;
+        }
+
+        private static DaggerfallUnityItem SetItemPropertiesCustom(DaggerfallUnityItem item)
+        {
+            if (item.ItemGroup != ItemGroups.Weapons && item.ItemGroup != ItemGroups.Armor)
+                return item;
+
+            var chance = UnityEngine.Random.Range(0, 101);
+            if (chance > 99) // epic item
+            {
+                    item.shortName = "Epic " + item.shortName;
+                    item.maxCondition *= 2;
+                    item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition * 2, 0, item.maxCondition);
+                    item.value *= 2;
+                    return item;
+            }
+
+            if (chance > 95) // Fine item
+            {
+                    item.shortName = "Fine " + item.shortName;
+                    item.value *= 3 / 2;
+                    item.maxCondition *=  3/ 2;
+                    item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition *  3/ 2, 0, item.maxCondition);
+                    return item;
+            }
+
+            if (chance < 1) // Shoddy item
+            {       item.shortName = "Shoddy " + item.shortName;;
+                    item.value /= 2;
+                    item.maxCondition /= 2;
+                    item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition / 2, 0, item.maxCondition);
+                    return item;
+            }
+
+            if (chance < 5) // Diminished item
+            {       item.shortName = "Diminished " + item.shortName;;
+                    item.value *= 3 / 4;
+                    item.maxCondition *= 3 / 4;
+                    item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition * 3 / 4, 0, item.maxCondition);
+                    return item;
+            }
+
+            return item;
+        }
+
         private static int GetItemValueMultiplier(DaggerfallUnityItem item, WeaponMaterialTypes material)
         {
             // Base material multipliers are squared to create a more significant gap between materials,
             // then multiplied by MaterialMultiplier to create a larger gap between item types (since material is only one factor of item value).
-            int[] valueMultipliersByMaterial = new int[] {1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144 };
+            int[] valueMultipliersByMaterial = new int[] {1, 2, 4, 8, 16, 32, 64, 128, 256, 512 };
 
-            return MaterialMultiplier * (item.value + valueMultipliersByMaterial[(int)material]);
+            int returnValue = 0;
+            returnValue = (item.ItemTemplate.basePrice * MaterialMultiplier *
+                           valueMultipliersByMaterial[(int)material]);
+
+            if (!item.HasLegacyEnchantments)
+                return returnValue;
+
+            var magicValue = ItemBuilder.CalculateEnchantValue(item);
+            returnValue += magicValue * (int)material * MaterialMultiplier;
+            return returnValue;
         }
 
         public static bool IsItemStackable(DaggerfallUnityItem item)
@@ -372,8 +460,9 @@ namespace RoleplayRealism
             }
         }
 
-        public static int CalculateWeaponMinDamage(Weapons weapon)
+        public static int CalculateWeaponMinDamage(Weapons weapon, DaggerfallUnityItem item)
         {
+            int minDamage = 0;
             switch (weapon)
             {
                 case Weapons.Dagger:
@@ -382,63 +471,86 @@ namespace RoleplayRealism
                 case Weapons.Saber:
                 case Weapons.Katana:
                 case Weapons.Dai_Katana:
-                    return 1;
+                    minDamage = 1;
+                    break;
                 case Weapons.Shortsword:
                 case Weapons.Broadsword:
                 case Weapons.Longsword:
                 case Weapons.Claymore:
-                    return 2;
+                    minDamage = 2;
+                    break;
                 case Weapons.Battle_Axe:
                 case Weapons.War_Axe:
                 case Weapons.Staff:
-                    return 3;
+                    minDamage = 3;
+                    break;
                 case Weapons.Mace:
                 case Weapons.Flail:
                 case Weapons.Warhammer:
                 case Weapons.Short_Bow:
                 case Weapons.Long_Bow:
-                    return 4;
+                    minDamage = 4;
+                    break;
                 default:
-                    return 0;
+                    minDamage = 0;
+                    break;
             }
+
+            return minDamage + ApplyCustomDamage(item, minDamage);
         }
 
-        public static int CalculateWeaponMaxDamage(Weapons weapon)
+
+        public static int CalculateWeaponMaxDamage(Weapons weapon, DaggerfallUnityItem item)
         {
+            int maxDamage= 0;
             switch (weapon)
             {
                 case Weapons.Dagger:
-                    return 6;
+                    maxDamage = 6;
+                    break;
                 case Weapons.Tanto:
-                    return 7;
+                    maxDamage = 7;
+                    break;
                 case Weapons.Shortsword:
                 case Weapons.Staff:
-                    return 8;
+                    maxDamage = 8;
+                    break;
                 case Weapons.Wakazashi:
-                    return 10;
+                    maxDamage = 10;
+                    break;
                 case Weapons.Mace:
-                    return 12;
+                    maxDamage = 12;
+                    break;
                 case Weapons.Battle_Axe:
-                    return 13;
+                    maxDamage = 13;
+                    break;
                 case Weapons.Broadsword:
                 case Weapons.Saber:
-                    return 14;
+                    maxDamage = 14;
+                    break;
                 case Weapons.Longsword:
-                    return 15;
+                    maxDamage = 15;
+                    break;
                 case Weapons.Katana:
                 case Weapons.Flail:
                 case Weapons.Short_Bow:
-                    return 16;
+                    maxDamage = 16;
+                    break;
                 case Weapons.Dai_Katana:
                 case Weapons.War_Axe:
                 case Weapons.Warhammer:
                 case Weapons.Long_Bow:
-                    return 18;
+                    maxDamage = 18;
+                    break;
                 case Weapons.Claymore:
-                    return 19;
+                    maxDamage = 19;
+                    break;
                 default:
-                    return 0;
+                    maxDamage = 0;
+                    break;
             }
+
+            return maxDamage + ApplyCustomDamage(item, maxDamage);
         }
 
         private static float GetMeleeWeaponAnimTime(PlayerEntity player, WeaponTypes weaponType, ItemHands weaponHands)
