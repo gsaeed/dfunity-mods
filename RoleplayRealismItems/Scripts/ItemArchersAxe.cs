@@ -16,6 +16,8 @@ namespace RoleplayRealism
 
         public ItemArchersAxe() : base(ItemGroups.Weapons, templateIndex)
         {
+            this.nativeMaterialValue = RoleplayRealismItemsMod.FixNativeMaterialValue(this);
+
         }
 
         // Always use same archive for both genders as the same image set is used

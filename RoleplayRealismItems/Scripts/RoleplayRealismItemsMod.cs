@@ -193,11 +193,11 @@ namespace RoleplayRealism
             if (item.shortName.Contains("Epic"))
                 return initialDamage;
             if (item.shortName.Contains("Fine"))
-                return initialDamage / 2;
+                return UnityEngine.Mathf.RoundToInt(initialDamage / 2.0f);
             if (item.shortName.Contains("Diminished"))
-                return -initialDamage / 4;
+                return UnityEngine.Mathf.RoundToInt(-initialDamage / 4f);
             if (item.shortName.Contains("Shoddy"))
-                return -initialDamage / 2;
+                return UnityEngine.Mathf.RoundToInt(-initialDamage / 2f);
 
             return 0;
         }
@@ -209,12 +209,11 @@ namespace RoleplayRealism
             if (item.shortName.Contains("Epic"))
                 return baseRating;
             if (item.shortName.Contains("Fine"))
-                return baseRating / 2;
+                return UnityEngine.Mathf.RoundToInt(baseRating / 2.0f);
             if (item.shortName.Contains("Diminished"))
-                return -baseRating / 4;
+                return UnityEngine.Mathf.RoundToInt(-baseRating / 4f);
             if (item.shortName.Contains("Shoddy"))
-                return -baseRating / 2;
-
+                return UnityEngine.Mathf.RoundToInt(-baseRating / 2f);
             return 0;
         }
 
@@ -227,34 +226,38 @@ namespace RoleplayRealism
             if (chance > 99) // epic item
             {
                     item.shortName = "Epic " + item.shortName;
-                    item.maxCondition *= 2;
-                    item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition * 2, 0, item.maxCondition);
-                    item.value *= 2;
+                    var mc = item.maxCondition * 2;
+                    item.maxCondition = mc;
+                    item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition * 2, 0, mc);
+                    item.value = item.value * 2;
                     return item;
             }
 
             if (chance > 95) // Fine item
             {
                     item.shortName = "Fine " + item.shortName;
-                    item.value *= 3 / 2;
-                    item.maxCondition *=  3/ 2;
-                    item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition *  3/ 2, 0, item.maxCondition);
+                    item.value = UnityEngine.Mathf.RoundToInt(item.value * 1.5f);
+                    var mc = UnityEngine.Mathf.RoundToInt(item.maxCondition * 1.5f);
+                    item.maxCondition = mc;
+                    item.currentCondition = UnityEngine.Mathf.Clamp(UnityEngine.Mathf.RoundToInt(item.currentCondition * 1.5f), 0, mc);
                     return item;
             }
 
             if (chance < 1) // Shoddy item
             {       item.shortName = "Shoddy " + item.shortName;;
-                    item.value /= 2;
-                    item.maxCondition /= 2;
-                    item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition / 2, 0, item.maxCondition);
+                    item.value = UnityEngine.Mathf.RoundToInt(item.value / 2.0f);
+                    var mc = UnityEngine.Mathf.RoundToInt(item.maxCondition / 2.0f);
+                    item.maxCondition = mc;
+                    item.currentCondition = UnityEngine.Mathf.Clamp(UnityEngine.Mathf.RoundToInt(item.currentCondition / 2.0f), 0, mc);
                     return item;
             }
 
             if (chance < 5) // Diminished item
             {       item.shortName = "Diminished " + item.shortName;;
-                    item.value *= 3 / 4;
-                    item.maxCondition *= 3 / 4;
-                    item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition * 3 / 4, 0, item.maxCondition);
+                    item.value = UnityEngine.Mathf.RoundToInt(item.value * 0.75f);
+                    var mc = UnityEngine.Mathf.RoundToInt(item.maxCondition * 0.75f);
+                    item.maxCondition = mc;
+                    item.currentCondition = UnityEngine.Mathf.Clamp(UnityEngine.Mathf.RoundToInt(item.currentCondition * 0.75f), 0, mc);
                     return item;
             }
 
@@ -1378,6 +1381,28 @@ namespace RoleplayRealism
                 return textDataBase[Key];
 
             return string.Empty;
+        }
+
+        public static int FixNativeMaterialValue(DaggerfallUnityItem item)
+        {
+            if (item.ItemGroup != ItemGroups.Armor)
+                return item.nativeMaterialValue;
+
+            // Check if a value exists in the enum
+            if (Enum.IsDefined(typeof(ArmorMaterialTypes), item.nativeMaterialValue))
+            {
+                return item.nativeMaterialValue;
+            }
+            if (item.nativeMaterialValue < 0x100)
+                Debug.LogError($"RolePlayRealismItems has bad armor value: {item.LongName}, {(int)item.nativeMaterialValue}");
+
+            // Check if a value exists in the enum
+            if (Enum.IsDefined(typeof(ArmorMaterialTypes), item.nativeMaterialValue + 0x200))
+            {
+                return item.nativeMaterialValue + 0x200;
+            }
+
+            return 0;
         }
     }
 }

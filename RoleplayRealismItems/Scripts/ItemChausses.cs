@@ -16,6 +16,7 @@ namespace RoleplayRealism
 
         public ItemChausses() : base(ItemGroups.Armor, templateIndex)
         {
+            this.nativeMaterialValue = RoleplayRealismItemsMod.FixNativeMaterialValue(this);
         }
 
         // Add mail prefix to name for Iron+ materials.

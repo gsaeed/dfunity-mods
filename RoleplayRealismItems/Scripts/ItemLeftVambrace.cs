@@ -17,6 +17,8 @@ namespace RoleplayRealism
 
         public ItemLeftVambrace() : base(ItemGroups.Armor, templateIndex)
         {
+            this.nativeMaterialValue = RoleplayRealismItemsMod.FixNativeMaterialValue(this);
+
         }
 
         // Add brig prefix to name for Iron+ materials.

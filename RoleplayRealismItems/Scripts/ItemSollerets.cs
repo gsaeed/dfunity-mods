@@ -16,6 +16,8 @@ namespace RoleplayRealism
 
         public ItemSollerets() : base(ItemGroups.Armor, templateIndex)
         {
+            this.nativeMaterialValue = RoleplayRealismItemsMod.FixNativeMaterialValue(this);
+
         }
 
         // Add mail prefix to name for Iron+ materials.
