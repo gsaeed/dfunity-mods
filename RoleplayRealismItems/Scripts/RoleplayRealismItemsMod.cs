@@ -939,10 +939,13 @@ namespace RoleplayRealism
             Debug.Log("Starting Equipment: Assigning Based on Skills");
 
             // Set condition of ebony dagger if player has one from char creation questions
-            IList daggers = playerEntity.Items.SearchItems(ItemGroups.Weapons, (int)Weapons.Dagger);
-            foreach (DaggerfallUnityItem dagger in daggers)
-                if (dagger.NativeMaterialValue > (int)WeaponMaterialTypes.Steel)
-                    dagger.currentCondition = (int)(dagger.maxCondition * 0.2);
+            //IList daggers = playerEntity.Items.SearchItems(ItemGroups.Weapons, (int)Weapons.Dagger);
+            //foreach (DaggerfallUnityItem dagger in daggers)
+            //    if (dagger.NativeMaterialValue > (int)WeaponMaterialTypes.Steel)
+            //        dagger.currentCondition = (int)(dagger.maxCondition * 0.2);
+            var campingEquipment = playerEntity.Items.SearchItems(ItemGroups.UselessItems2, 530);
+            foreach (DaggerfallUnityItem item in campingEquipment)
+                item.currentCondition = item.maxCondition;
 
             // Skill based items
             AssignSkillItems(playerEntity, playerEntity.Career.PrimarySkill1);
