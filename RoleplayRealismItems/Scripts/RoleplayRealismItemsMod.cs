@@ -47,6 +47,12 @@ namespace RoleplayRealism
         public static int JewelleryCostMultiplier = 1;
         public static bool ConditionBasedPrices = false;
         private static int MaterialMultiplier = 3;
+        public static int ChanceToFindFineWeaponsAndArmor { get; set; }
+        public static int ChanceToFindEpicWeaponsAndArmor { get; set; }
+
+        public static int ChanceToFindDiminishedWeaponsAndArmor { get; set; }
+        public static int ChanceToFindShoddyWeaponsAndArmor { get; set; }
+
         static Dictionary<string, string> textDataBase = null;
 
         [Invoke(StateManager.StateTypes.Start, 0)]
@@ -78,12 +84,18 @@ namespace RoleplayRealism
             FancyClothingCostMultiplier = settings.GetValue<int>("Modules", "FancyClothingCostMultiplier");
             GemCostMultiplier = settings.GetValue<int>("Modules", "GemCostMultiplier");
             JewelleryCostMultiplier = settings.GetValue<int>("Modules", "JewelryCostMultiplier");
+            ChanceToFindFineWeaponsAndArmor = settings.GetValue<int>("Modules", "ChanceToFindFineWeaponsAndArmor");
+            ChanceToFindEpicWeaponsAndArmor = settings.GetValue<int>("Modules", "ChanceToFindEpicWeaponsAndArmor");
+            ChanceToFindDiminishedWeaponsAndArmor = settings.GetValue<int>("Modules", "ChanceToFindDiminishedWeaponsAndArmor");
+            ChanceToFindShoddyWeaponsAndArmor = settings.GetValue<int>("Modules", "ChanceToFindShoddyWeaponsAndArmor");
             LoadTextData();
 
             InitMod(lootRebalance, bandaging,  storeQualityItems, enemyEquipment, skillStartEquip, skillStartSpells, weaponBalance, newWeapons, newArmor, alchemistPotions);
 
             mod.IsReady = true;
         }
+
+
 
         private static void InitMod(bool lootRebalance, bool bandaging, bool storeQualityItems, bool enemyEquipment, bool skillStartEquip, bool skillStartSpells, bool weaponBalance, bool newWeapons, bool newArmor, bool alchemistPotions)
         {
@@ -223,7 +235,7 @@ namespace RoleplayRealism
                 return item;
 
             var chance = UnityEngine.Random.Range(0, 101);
-            if (chance > 99) // epic item
+            if (ChanceToFindEpicWeaponsAndArmor > 0 && chance > 100 - ChanceToFindEpicWeaponsAndArmor) // epic item
             {
                     item.shortName = "Epic " + item.shortName;
                     var mc = item.maxCondition * 2;
@@ -233,7 +245,7 @@ namespace RoleplayRealism
                     return item;
             }
 
-            if (chance > 95) // Fine item
+            if (ChanceToFindFineWeaponsAndArmor > 0 && chance > 100 - ChanceToFindFineWeaponsAndArmor) // Fine item
             {
                     item.shortName = "Fine " + item.shortName;
                     item.value = UnityEngine.Mathf.RoundToInt(item.value * 1.5f);
@@ -243,7 +255,7 @@ namespace RoleplayRealism
                     return item;
             }
 
-            if (chance < 1) // Shoddy item
+            if (ChanceToFindShoddyWeaponsAndArmor > 0 && chance < ChanceToFindShoddyWeaponsAndArmor) // Shoddy item
             {       item.shortName = "Shoddy " + item.shortName;;
                     item.value = UnityEngine.Mathf.RoundToInt(item.value / 2.0f);
                     var mc = UnityEngine.Mathf.RoundToInt(item.maxCondition / 2.0f);
@@ -252,7 +264,7 @@ namespace RoleplayRealism
                     return item;
             }
 
-            if (chance < 5) // Diminished item
+            if (ChanceToFindDiminishedWeaponsAndArmor > 0 && chance < ChanceToFindDiminishedWeaponsAndArmor) // Diminished item
             {       item.shortName = "Diminished " + item.shortName;;
                     item.value = UnityEngine.Mathf.RoundToInt(item.value * 0.75f);
                     var mc = UnityEngine.Mathf.RoundToInt(item.maxCondition * 0.75f);

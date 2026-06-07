@@ -141,6 +141,42 @@
                     "Description": null,
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 0,
+                    "Max": 100,
+                    "Value": 5,
+                    "Name": "ChanceToFindFineWeaponsAndArmor",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 0,
+                    "Max": 100,
+                    "Value": 2,
+                    "Name": "ChanceToFindEpicWeaponsAndArmor",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 0,
+                    "Max": 100,
+                    "Value": 5,
+                    "Name": "ChanceToFindDiminishedWeaponsAndArmor",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 0,
+                    "Max": 100,
+                    "Value": 2,
+                    "Name": "ChanceToFindShoddyWeaponsAndArmor",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
                 }
             ],
             "$version": "v1"
