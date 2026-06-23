@@ -48,6 +48,7 @@ namespace RoleplayRealism
         public static bool ConditionBasedPrices = false;
         private static int MaterialMultiplier = 3;
         public static int ChanceToFindFineWeaponsAndArmor { get; set; }
+        public static int ForceQualityLevel = 5; // 0 = shoddy 1 = diminished 2 = normal 3 = fine 4 = epic 5 = random
         public static int ChanceToFindEpicWeaponsAndArmor { get; set; }
 
         public static int ChanceToFindDiminishedWeaponsAndArmor { get; set; }
@@ -91,18 +92,32 @@ namespace RoleplayRealism
             LoadTextData();
 
             InitMod(lootRebalance, bandaging,  storeQualityItems, enemyEquipment, skillStartEquip, skillStartSpells, weaponBalance, newWeapons, newArmor, alchemistPotions);
+            mod.MessageReceiver = MessageReceiver;
 
             mod.IsReady = true;
         }
 
+        static void MessageReceiver(string message, object data, DFModMessageCallback callBack)
+        {
+            switch (message)
+            {
+                case "SetQualityLevel":
+                    if (data is int)
+                        ForceQualityLevel = (int)data;
+                    callBack?.Invoke("SetQualityLevel", true);
 
+                    break;
+                default:
+                    break;
+            }
+        }
 
         private static void InitMod(bool lootRebalance, bool bandaging, bool storeQualityItems, bool enemyEquipment, bool skillStartEquip, bool skillStartSpells, bool weaponBalance, bool newWeapons, bool newArmor, bool alchemistPotions)
         {
             Debug.Log("Begin mod init: RoleplayRealismItems");
 
             FormulaHelper.RegisterOverride(mod, "GetItemValueMultiplier", (Func<DaggerfallUnityItem, WeaponMaterialTypes, int>)GetItemValueMultiplier);
-            FormulaHelper.RegisterOverride(mod, "SetItemPropertiesCustom", (Func<DaggerfallUnityItem, DaggerfallUnityItem>)SetItemPropertiesCustom);
+            FormulaHelper.RegisterOverride(mod, "SetItemPropertiesCustom", (Func<DaggerfallUnityItem, bool>)SetItemPropertiesCustom);
             FormulaHelper.RegisterOverride(mod, "ApplyCustomArmorRating", (Func<DaggerfallUnityItem, int, int>)ApplyCustomArmorRating);
 
 
@@ -229,51 +244,69 @@ namespace RoleplayRealism
             return 0;
         }
 
-        private static DaggerfallUnityItem SetItemPropertiesCustom(DaggerfallUnityItem item)
+        private static bool SetItemPropertiesCustom(DaggerfallUnityItem item)
         {
+            var qualityConditionNames = new string[6] { "Shoddy", "Diminished", "Normal", "Fine", "Epic", "Random" };
+
+            ForceQualityLevel = ForceQualityLevel < 0 || ForceQualityLevel > 5 ? 5 : ForceQualityLevel;
+
+            if ((ForceQualityLevel >=0 && ForceQualityLevel < 5) || (item.NativeMaterialValue == 9))
+               Debug.LogError($"RoleplayRealismItems - Quality Level set to {ForceQualityLevel} forcing {item.LongName} to be {qualityConditionNames[ForceQualityLevel]}"); 
+
             if (item.ItemGroup != ItemGroups.Weapons && item.ItemGroup != ItemGroups.Armor)
-                return item;
+                return true;
 
             var chance = UnityEngine.Random.Range(0, 101);
-            if (ChanceToFindEpicWeaponsAndArmor > 0 && chance > 100 - ChanceToFindEpicWeaponsAndArmor) // epic item
+
+            if (ForceQualityLevel == 4 ||
+                ((ForceQualityLevel == 2 || ForceQualityLevel == 5)
+                 && ChanceToFindEpicWeaponsAndArmor > 0 && chance > 100 - ChanceToFindEpicWeaponsAndArmor)) // epic item
             {
                     item.shortName = "Epic " + item.shortName;
                     var mc = item.maxCondition * 2;
                     item.maxCondition = mc;
                     item.currentCondition = UnityEngine.Mathf.Clamp(item.currentCondition * 2, 0, mc);
                     item.value = item.value * 2;
-                    return item;
+                    ForceQualityLevel = 5;
+                    return true;
             }
 
-            if (ChanceToFindFineWeaponsAndArmor > 0 && chance > 100 - ChanceToFindFineWeaponsAndArmor) // Fine item
+            if (ForceQualityLevel == 3 ||
+                ((ForceQualityLevel == 2 || ForceQualityLevel == 5)
+                 && ChanceToFindFineWeaponsAndArmor > 0 && chance > 100 - ChanceToFindFineWeaponsAndArmor)) // Fine item
             {
                     item.shortName = "Fine " + item.shortName;
                     item.value = UnityEngine.Mathf.RoundToInt(item.value * 1.5f);
                     var mc = UnityEngine.Mathf.RoundToInt(item.maxCondition * 1.5f);
                     item.maxCondition = mc;
                     item.currentCondition = UnityEngine.Mathf.Clamp(UnityEngine.Mathf.RoundToInt(item.currentCondition * 1.5f), 0, mc);
-                    return item;
+                    ForceQualityLevel = 5;
+                    return true;
             }
 
-            if (ChanceToFindShoddyWeaponsAndArmor > 0 && chance < ChanceToFindShoddyWeaponsAndArmor) // Shoddy item
+            if (ForceQualityLevel == 0 ||
+                (ForceQualityLevel == 5 && ChanceToFindShoddyWeaponsAndArmor > 0 && chance < ChanceToFindShoddyWeaponsAndArmor)) // Shoddy item
             {       item.shortName = "Shoddy " + item.shortName;;
                     item.value = UnityEngine.Mathf.RoundToInt(item.value / 2.0f);
                     var mc = UnityEngine.Mathf.RoundToInt(item.maxCondition / 2.0f);
                     item.maxCondition = mc;
                     item.currentCondition = UnityEngine.Mathf.Clamp(UnityEngine.Mathf.RoundToInt(item.currentCondition / 2.0f), 0, mc);
-                    return item;
+                    ForceQualityLevel = 5;
+                    return true;
             }
 
-            if (ChanceToFindDiminishedWeaponsAndArmor > 0 && chance < ChanceToFindDiminishedWeaponsAndArmor) // Diminished item
+            if (ForceQualityLevel == 1 ||
+                (ForceQualityLevel == 5 && ChanceToFindDiminishedWeaponsAndArmor > 0 && chance < ChanceToFindDiminishedWeaponsAndArmor)) // Diminished item
             {       item.shortName = "Diminished " + item.shortName;;
                     item.value = UnityEngine.Mathf.RoundToInt(item.value * 0.75f);
                     var mc = UnityEngine.Mathf.RoundToInt(item.maxCondition * 0.75f);
                     item.maxCondition = mc;
                     item.currentCondition = UnityEngine.Mathf.Clamp(UnityEngine.Mathf.RoundToInt(item.currentCondition * 0.75f), 0, mc);
-                    return item;
+                    ForceQualityLevel = 5;
+                    return true;
             }
 
-            return item;
+            return true;
         }
 
         private static int GetItemValueMultiplier(DaggerfallUnityItem item, WeaponMaterialTypes material)
